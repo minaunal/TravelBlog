@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alıcı Sayfa</title>
+   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        
+        body {
+            padding-top: 70px;
+            background-color: powderblue;
+        }
+
+        .btn-primary {
+            background-color: #dd1b66;
+            border-color: #dd1b66;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #dd1b66;
+            border-color: #dd1b66;
+        }
+
+        .centered-form {
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px; 
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-globe-americas fa-2x me-2"></i> 
+                TravelBlog
+            </a>
+        </div>
+    </nav>
+
+    
+    <div class="container mt-5">
+        <div class="centered-form">
+            <h1 id="userData" class="text-center"></h1>
+
+            <button id="followButton" class="btn btn-primary">Follow to see the posts</button>
+
+
+            <p id="noData" class="text-center d-none">Gönderilen veri bulunamadı.</p>
+        </div>
+    </div>
+
+    <script>
+        const data = localStorage.getItem('followuser');
+        const token = localStorage.getItem('authToken');
+
+        if (data) {
+            const userData = document.getElementById('userData');
+            userData.textContent = "@" + data;
+
+            const followButton = document.getElementById('followButton');
+            followButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('http://localhost:7000/login/follow', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: data,
+                    });
+
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        const postContainer = document.createElement('div');
+                        postContainer.classList.add('container', 'mt-4');
+                        const row = document.createElement('div');
+                        row.classList.add('row');
+
+                        responseData.forEach(item => {
+                            const postDiv = document.createElement('div');
+                            postDiv.classList.add('col-12', 'mb-4');
+                            const card = document.createElement('div');
+                            card.classList.add('card');
+
+                            const userDiv = document.createElement('div');
+                            userDiv.classList.add('d-flex', 'align-items-center');
+                            const icon = document.createElement('i');
+                            icon.classList.add('fas', 'fa-user');
+                            icon.style.fontSize = '24px';
+                            userDiv.appendChild(icon);
+
+                            const usernameSpan = document.createElement('span');
+                            usernameSpan.textContent = `@${item.username}`;
+                            usernameSpan.classList.add('fw-bold', 'ml-2');
+                            userDiv.appendChild(usernameSpan);
+
+                            const cardBody = document.createElement('div');
+                            cardBody.classList.add('card-body');
+
+                            const title = document.createElement('h5');
+                            title.classList.add('card-title', 'fw-bold');
+                            title.textContent = item.baslik;
+                            cardBody.appendChild(userDiv);
+                            cardBody.appendChild(title);
+
+                            const text = document.createElement('p');
+                            text.classList.add('card-text');
+                            text.textContent = item.metin;
+                            cardBody.appendChild(text);
+
+                            card.appendChild(cardBody);
+                            postDiv.appendChild(card);
+                            row.appendChild(postDiv);
+                        });
+
+                        postContainer.appendChild(row);
+                        document.body.appendChild(postContainer);
+
+                      
+                    }
+                } catch (error) {
+                    console.error('Error.', error);
+                }
+            });
+        } else {
+            const noData = document.getElementById('noData');
+            noData.classList.remove('d-none');
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

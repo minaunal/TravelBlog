@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+</head>
+<body>
+
+    <script>
+        window.onload = function() {
+            const token = localStorage.getItem('authToken');
+
+            // Eğer token varsa local'den sil
+            if (token) {
+                localStorage.removeItem('authToken');
+
+                // Logout için istek gönder
+                fetch('http://localhost:7000/logout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Eğer sunucu JWT token kullanıyorsa, token'ı gönder
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Logout başarılı.');
+                        // İstek başarılıysa yönlendirme yapabilirsiniz
+                        window.location.href = 'giris.html'; // Örnek bir login sayfası URL'si
+                    } else {
+                        console.error('Logout başarısız.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout işlemi sırasında hata oluştu:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

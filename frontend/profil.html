@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Update</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Özelleştirmeler */
+        body {
+            padding-top: 70px;
+            background-color: powderblue;
+        }
+
+        .btn-primary {
+            background-color: #dd1b66;
+            border-color: #dd1b66;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #dd1b66;
+            border-color: #dd1b66;
+        }
+
+        .centered-form {
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px; /* Diğer sayfanın üstüne çıkmak için ayarlandı */
+        }
+        .navbar {
+      background-color: #f8f9fa; /* Navbar arkaplan rengi */
+      padding: 15px 0; /* Navbar içerik boşluğu */
+    }
+
+    .navbar-brand {
+      font-size: 24px; /* Navbar marka font büyüklüğü */
+      font-weight: bold; /* Navbar marka font kalınlığı */
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-globe-americas fa-2x me-2"></i> <!-- Küçültülmüş ikon -->
+                TravelBlog
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+    <div class="centered-form">
+        <h2 class="text-center mb-4">Password Updating Form</h2> <!-- Başlık eklendi -->
+      <form id="change" action="http://localhost:7000/login/password" method="post" th:object="${userreq}" class="p-4 border">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" name="username" th:field="*{username}" class="form-control mb-3" required>
+
+        <label for="password">New Password</label>
+        <input type="password" id="password" name="password" th:field="*{password}" class="form-control mb-3" required>
+
+        <!-- Bootstrap butonu -->
+        <button type="submit" class="btn btn-primary">Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS ve jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('change').addEventListener('submit', async (event) => {
+      event.preventDefault(); // Formun varsayılan submit işlemini engelle
+
+      const form = event.target;
+      const formData = new FormData(form); // Form verilerini al
+
+
+      const response = await fetch(form.action, {
+        method: form.method,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(formData),
+      });
+
+      if (!response.ok) {
+        const data = await response.text();
+        console.error('Hata oluştu:', data);
+        alert('Giriş başarısız: ' + data);
+        return;
+      }
+      if (response.ok) {
+        
+            // Kullanıcı adı var, istediğiniz şekilde kullanabilirsiniz
+            window.location.href = "giris.html";
+        
+          
+      }
+    });
+  </script>
+</body>
+</html>
